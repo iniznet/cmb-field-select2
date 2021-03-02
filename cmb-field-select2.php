@@ -112,7 +112,7 @@ class PW_CMB2_Field_Select2 {
 			'id'               => $field_type_object->_id(),
 			'desc'             => $field_type_object->_desc( true ),
 			'options'          => $this->get_pw_multiselect_taxonomy_options( $object_terms, $all_terms, $field_type_object ),
-			'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
+			//'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
 		) );
 
 		$attrs = $field_type_object->concat_attrs( $a, array( 'desc', 'options' ) );
@@ -192,23 +192,27 @@ class PW_CMB2_Field_Select2 {
 		$options  = '';
 		$selected = array();
 
-		foreach ( $object_terms as $term ) {
-			$selected[ $term->slug ] = $term->name;
+		if ( is_array( $object_terms ) ) {
+			foreach ( $object_terms as $term ) {
+				$selected[ $term->slug ] = $term->slug;
 
-			$options .= $field_type_object->select_option( array(
-				'label'   => $term->name,
-				'value'   => $term->slug,
-				'checked' => true,
-			) );
+				$options .= $field_type_object->select_option( array(
+					'label'   => $term->name,
+					'value'   => $term->slug,
+					'checked' => true,
+				) );
+			}
 		}
 
 		foreach ( $all_terms as $term ) {
-			if ( ! array_key_exists( $selected[ $term->slug] ) ) {
+			if ( ! array_key_exists( $term->slug, $selected) ) {
 				$options .= $field_type_object->select_option( array(
 					'label'   => $term->name,
 					'value'   => $term->slug,
 					'checked' => false,
 				) );
+			} else {
+				continue;
 			}
 		}
 
@@ -278,12 +282,13 @@ class PW_CMB2_Field_Select2 {
 	 * Enqueue scripts and styles
 	 */
 	public function setup_admin_scripts() {
-		$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__  ) );
 
-		wp_register_script( 'pw-select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.3' );
-		wp_enqueue_script( 'pw-select2-init', $asset_path . '/js/script.js', array( 'cmb2-scripts', 'pw-select2' ), self::VERSION );
-		wp_register_style( 'pw-select2', $asset_path . '/css/select2.min.css', array(), '4.0.3' );
-		wp_enqueue_style( 'pw-select2-tweaks', $asset_path . '/css/style.css', array( 'pw-select2' ), self::VERSION );
+		wp_register_script( 'pw-select2',trv_cmb2 . 'cmb2-select2/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.13' );
+		wp_enqueue_script( 'pw-select2-init', trv_cmb2 . 'cmb2-select2/js/script.js', array( 'cmb2-scripts', 'pw-select2' ), self::VERSION );
+		wp_register_style( 'pw-select2', trv_cmb2 . 'cmb2-select2/css/select2.min.css', array(), '4.0.13' );
+		wp_enqueue_style( 'pw-select2-tweaks', trv_cmb2 . 'cmb2-select2/css/style.css', array( 'pw-select2' ), self::VERSION );
+
+		wp_add_inline_script( 'pw-select2-init', 'jQuery(".pw_select2").select2({tags: true});' );
 	}
 
 	/**
