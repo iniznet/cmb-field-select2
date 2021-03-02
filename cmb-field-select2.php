@@ -112,7 +112,7 @@ class PW_CMB2_Field_Select2 {
 			'id'               => $field_type_object->_id(),
 			'desc'             => $field_type_object->_desc( true ),
 			'options'          => $this->get_pw_multiselect_taxonomy_options( $object_terms, $all_terms, $field_type_object ),
-			//'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
+			'data-placeholder' => $field->args( 'attributes', 'placeholder' ) ? $field->args( 'attributes', 'placeholder' ) : $field->args( 'description' ),
 		) );
 
 		$attrs = $field_type_object->concat_attrs( $a, array( 'desc', 'options' ) );
