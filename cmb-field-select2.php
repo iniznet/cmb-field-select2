@@ -4,7 +4,7 @@ Plugin Name: CMB2 Field Type: Select2
 Plugin URI: https://github.com/mustardBees/cmb-field-select2
 GitHub Plugin URI: https://github.com/mustardBees/cmb-field-select2
 Description: Select2 field type for CMB2.
-Version: 3.0.3
+Version: 3.0.4
 Author: Phil Wylie
 Author URI: https://www.philwylie.co.uk/
 License: GPLv2+
@@ -18,7 +18,7 @@ class PW_CMB2_Field_Select2 {
 	/**
 	 * Current version number
 	 */
-	const VERSION = '3.0.3';
+	const VERSION = '3.0.4';
 
 	/**
 	 * Initialize the plugin by hooking into CMB2
@@ -130,27 +130,39 @@ class PW_CMB2_Field_Select2 {
 		$options = (array) $field_type_object->field->options();
 
 		// If we have selected items, we need to preserve their order
-		if ( ! empty( $field_escaped_value ) ) {
+		if ( ! empty( $options ) ) {
 			$options = $this->sort_array_by_array( $options, $field_escaped_value );
 		}
 
 		$selected_items = '';
 		$other_items = '';
 
-		foreach ( $options as $option_value => $option_label ) {
+		if ( ! empty( $options ) ) {
+			foreach ( $options as $option_value => $option_label ) {
 
-			// Clone args & modify for just this item
-			$option = array(
-				'value' => $option_value,
-				'label' => $option_label,
-			);
+				// Clone args & modify for just this item
+				$option = array(
+					'value' => $option_value,
+					'label' => $option_label,
+				);
 
-			// Split options into those which are selected and the rest
-			if ( in_array( $option_value, (array) $field_escaped_value ) ) {
-				$option['checked'] = true;
+				// Split options into those which are selected and the rest
+				if ( in_array( $option_value, (array) $field_escaped_value ) ) {
+					$option['checked'] = true;
+					$selected_items .= $field_type_object->select_option( $option );
+				} else {
+					$other_items .= $field_type_object->select_option( $option );
+				}
+			}
+		} else {
+			foreach ( $field_escaped_value as $value ) {
+				$option = array(
+					'value'		=> $value,
+					'label' 	=> $value,
+					'checked'   => true
+				);
+
 				$selected_items .= $field_type_object->select_option( $option );
-			} else {
-				$other_items .= $field_type_object->select_option( $option );
 			}
 		}
 
@@ -288,7 +300,8 @@ class PW_CMB2_Field_Select2 {
 		wp_register_style( 'pw-select2', trv_cmb2 . 'cmb2-select2/css/select2.min.css', array(), '4.0.13' );
 		wp_enqueue_style( 'pw-select2-tweaks', trv_cmb2 . 'cmb2-select2/css/style.css', array( 'pw-select2' ), self::VERSION );
 
-		wp_add_inline_script( 'pw-select2-init', 'jQuery(".pw_select2").select2({tags: true});' );
+		// Allow dynamic options, disabled as default
+		//wp_add_inline_script( 'pw-select2-init', 'jQuery(".pw_select2").select2({tags: true});' );
 	}
 
 	/**
