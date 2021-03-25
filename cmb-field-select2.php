@@ -295,10 +295,12 @@ class PW_CMB2_Field_Select2 {
 	 */
 	public function setup_admin_scripts() {
 
-		wp_register_script( 'pw-select2',trv_cmb2 . 'cmb2-select2/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.13' );
-		wp_enqueue_script( 'pw-select2-init', trv_cmb2 . 'cmb2-select2/js/script.js', array( 'cmb2-scripts', 'pw-select2' ), self::VERSION );
-		wp_register_style( 'pw-select2', trv_cmb2 . 'cmb2-select2/css/select2.min.css', array(), '4.0.13' );
-		wp_enqueue_style( 'pw-select2-tweaks', trv_cmb2 . 'cmb2-select2/css/style.css', array( 'pw-select2' ), self::VERSION );
+		$asset_path = apply_filters( 'pw_cmb2_field_select2_asset_path', plugins_url( '', __FILE__  ) );
+
+		wp_register_script( 'pw-select2', $asset_path . '/js/select2.min.js', array( 'jquery-ui-sortable' ), '4.0.3' );
+		wp_enqueue_script( 'pw-select2-init', $asset_path . '/js/script.js', array( 'cmb2-scripts', 'pw-select2' ), self::VERSION );
+		wp_register_style( 'pw-select2', $asset_path . '/css/select2.min.css', array(), '4.0.3' );
+		wp_enqueue_style( 'pw-select2-tweaks', $asset_path . '/css/style.css', array( 'pw-select2' ), self::VERSION );
 
 		// Allow dynamic options, disabled as default
 		//wp_add_inline_script( 'pw-select2-init', 'jQuery(".pw_select2").select2({tags: true});' );
