@@ -129,12 +129,15 @@ class PW_CMB2_Field_Select2 {
 	public function get_pw_multiselect_options( $field_escaped_value = array(), $field_type_object ) {
 		$options = (array) $field_type_object->field->options();
 
+		// If we have selected items, we need to preserve their order
+		if ( ! empty( $field_escaped_value ) ) {
+			$options = $this->sort_array_by_array( $options, $field_escaped_value );
+		}
+
 		$selected_items = '';
 		$other_items = '';
 
-		// If we have selected items, we need to preserve their order
-		if ( ! empty( $options ) ) {
-			$options = $this->sort_array_by_array( $options, $field_escaped_value );
+		if ( !empty( $options ) ) {
 			foreach ( $options as $option_value => $option_label ) {
 
 				// Clone args & modify for just this item
@@ -156,7 +159,7 @@ class PW_CMB2_Field_Select2 {
 				$option = array(
 					'value'		=> $value,
 					'label' 	=> $value,
-					'checked'   => true
+					'checked'   	=> true
 				);
 
 				$selected_items .= $field_type_object->select_option( $option );
@@ -165,7 +168,7 @@ class PW_CMB2_Field_Select2 {
 			$option = array(
 				'value'		=> $field_escaped_value,
 				'label' 	=> $field_escaped_value,
-				'checked'   => true
+				'checked'	=> true
 			);
 
 			$selected_items .= $field_type_object->select_option( $option );
